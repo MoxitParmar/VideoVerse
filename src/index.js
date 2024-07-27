@@ -8,7 +8,7 @@ dotenv.config({
   path: "./.env",
 });
 
-// Connect to the database
+//Error handling after Connection to the database
 connectDB()
   .then(() => {
     // Handle any errors that occur in the express app

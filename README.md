@@ -2,10 +2,12 @@
 
 VideoVerse is a complete backend web application similar to YouTube, built with the MERN stack. It offers many of the same features as YouTube. the backend for this project is completed and Now gearing up to dive into frontend development for this project. Stay tuned for more updates! 💻
 
-this project is inspired by [chai-backend series](https://youtube.com/playlist?list=PLu71SKxNbfoBGh_8p_NS-ZAh6v7HhYqHW&feature=shared) 
+this project is inspired by [chai-backend series](https://youtube.com/playlist?list=PLu71SKxNbfoBGh_8p_NS-ZAh6v7HhYqHW&feature=shared)
 
 ---
+
 ## functionality of the VideoVerse backend
+
 ### Authentication
 
 - **Login:** Secure authentication with JWT tokens system allowing users to log in to their accounts.
@@ -16,11 +18,11 @@ this project is inspired by [chai-backend series](https://youtube.com/playlist?l
 
 The Channel section provides users with a personalized space for managing their content and interactions:
 
--  **Videos:** Contains the user's uploaded videos, with sort operations.
--  **Tweets:** Access to tweets posted by the user, with editing, deleting, and updating capabilities.
--  **Playlists:** Management of created playlists, including creation, editing, updating, and deletion.
--  **Subscribers:** Overview of the user's subscriber base.
--  **Liked Video List of user:** View liked videos with infinite scroll pagination.
+- **Videos:** Contains the user's uploaded videos, with sort operations.
+- **Tweets:** Access to tweets posted by the user, with editing, deleting, and updating capabilities.
+- **Playlists:** Management of created playlists, including creation, editing, updating, and deletion.
+- **Subscribers:** Overview of the user's subscriber base.
+- **Liked Video List of user:** View liked videos with infinite scroll pagination.
 
 ### Video
 
@@ -52,7 +54,9 @@ Effortless management of channel subscriptions:
 ### Dashboard
 
 - Insightful overview of channel statistics and video management tools.
+
 ---
+
 ## Backend Tech Stack
 
 - Node.js
@@ -65,23 +69,25 @@ Effortless management of channel subscriptions:
 - Cookie-parser
 - bcrypt
 - Cloudinary
----
-## Getting Started
 
+---
+
+## Getting Started
 
 Follow these steps to set up the project on your local machine:
 
 1. Clone the repository:
-    ```
-    https://github.com/MoxitParmar/VideoVerse
-    ```
-    
+   ```
+   https://github.com/MoxitParmar/VideoVerse
+   ```
 2. Set up the backend:
-    - Navigate to the backend folder: `cd backend`.
-    - Install dependencies: `npm install`
-    - Set up environment variables: Create a `.env` file.
-    - Start the backend server: `npm run dev`
+
+   - Navigate to the backend folder: `cd backend`.
+   - Install dependencies: `npm install`
+   - Set up environment variables: Create a `.env` file.
+   - Start the backend server: `npm run dev`
 
 3. Access the application:
-    - Open your postman and give requests at : `http://localhost:8000/api/v1`
+   - Open your postman and give requests at : `http://localhost:8000/api/v1`
+
 ---
