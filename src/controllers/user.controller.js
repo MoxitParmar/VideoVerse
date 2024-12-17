@@ -10,7 +10,7 @@ import { apiResponce } from "../utils/apiResponce.js"; // Import the apiResponce
 import jwt from "jsonwebtoken"; // Import the jsonwebtoken package
 import mongoose from "mongoose";
 
-// step 5: Generate access and refresh token method
+// step 5: Generate access and refresh token method (from the login controller)
 const generateAccessTokenAndRefreshToken = async (userID) => {
   try {
     // Find the user by ID
@@ -47,7 +47,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   // step 1: Get the user data from the request body
   const { fullName, email, username, password } = req.body;
-  console.log("email:", email);
+  // console.log("email:", email);
 
   // step 2: Check if any required fields are empty
   if (
@@ -67,16 +67,17 @@ const registerUser = asyncHandler(async (req, res) => {
 
   // Get the local path of the avatar image
   const avatarLocalPath = req.files?.avatar?.[0].path;
+  // console.log(avatarLocalPath);
 
   // Get the local path of the cover image (if it exists)
-  let coverImageLocalPath;
-  if (
-    req.files &&
-    Array.isArray(req.files.coverImage) &&
-    req.files.coverImage.length > 0
-  ) {
-    coverImageLocalPath = req.files.coverImage[0].path;
-  }
+  let coverImageLocalPath = req.files?.coverImage?.[0].path;
+  // if (
+  //   req.files &&
+  //   Array.isArray(req.files.coverImage) &&
+  //   req.files.coverImage.length > 0
+  // ) {
+  //   coverImageLocalPath = req.files.coverImage[0].path;
+  // }
 
   // stpe 4: Check if the avatar image is provided
   if (!avatarLocalPath) {
@@ -287,15 +288,13 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 
 //delete current user
 const deleteCurrentUser = asyncHandler(async (req, res) => {
-
   const publicId = await extractPublicId(req.user.coverImage);
-  const deleteResponse = await deleteFromCloudinary(publicId);
+  await deleteFromCloudinary(publicId);
 
   const publicId0 = await extractPublicId(req.user.avatar);
-  const deleteResponse0 = await deleteFromCloudinary(publicId0);
+  await deleteFromCloudinary(publicId0);
 
   await User.findByIdAndDelete(req.user._id);
-
 
   const options = {
     httpOnly: true,
@@ -406,17 +405,16 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
   const channel = await User.aggregate([
     {
       // match the username from the request
-      $match: { username: username?.toLowerCase() }
+      $match: { username: username?.toLowerCase() },
     },
     {
-      // add subscribers array in that user 
+      // add subscribers array in that user
       $lookup: {
         from: "subscriptions",
         localField: "_id",
         foreignField: "channel",
-        as: "subscribers"
-      }
-      
+        as: "subscribers",
+      },
     },
     // add subscribedTo array in that user
     {
@@ -424,8 +422,8 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         from: "subscriptions",
         localField: "_id",
         foreignField: "subscriber",
-        as: "subscribedTo"
-      }
+        as: "subscribedTo",
+      },
     },
     // add fields like subscriberCount, channelsSubscribedToCount, isSubscribed in that user
     {
@@ -435,13 +433,13 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         isSubscribed: {
           $cond: {
             if: {
-              $in: [req.user?._id, "$subscribers.subscriber"]
+              $in: [req.user?._id, "$subscribers.subscriber"],
             },
             then: true,
-            else: false
-          }
-        }
-      }
+            else: false,
+          },
+        },
+      },
     },
     // project the fields to return in the response -> channel[0]
     {
@@ -453,25 +451,27 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         isSubscribed: 1,
         avatar: 1,
         coverImage: 1,
-        email: 1
-      }
-    }
-  ])
+        email: 1,
+      },
+    },
+  ]);
 
   if (!channel?.length) {
     throw new apiError(404, "Channel not found");
   }
 
   // return the channel info in the response
-  return res.status(200).json(new apiResponce(200, channel[0], "Channel found successfully"));
-})
+  return res
+    .status(200)
+    .json(new apiResponce(200, channel[0], "Channel found successfully"));
+});
 
 // Get watch history
 const getWatchHistory = asyncHandler(async (req, res) => {
   const user = await User.aggregate([
     {
       //there is the user that we want to get the watch history
-      $match: { _id: new mongoose.Types.ObjectId(req.user._id) }
+      $match: { _id: new mongoose.Types.ObjectId(req.user._id) },
     },
     {
       // add watchHistory array in that user which contains all the videos collections
@@ -483,7 +483,7 @@ const getWatchHistory = asyncHandler(async (req, res) => {
         pipeline: [
           {
             //now in videos collection we have the owner field to each videos
-            //so here we add owner array in all that videos 
+            //so here we add owner array in all that videos
             $lookup: {
               from: "users",
               localField: "owner",
@@ -495,27 +495,34 @@ const getWatchHistory = asyncHandler(async (req, res) => {
                   $project: {
                     fullName: 1,
                     username: 1,
-                    avatar: 1
-                  }
-                }
-              ]
-            }
-          }, {
+                    avatar: 1,
+                  },
+                },
+              ],
+            },
+          },
+          {
             // convert the owner array to object in videos collection
             $addFields: {
-              owner: { $first: "$owner"}
-            }
-          }
-        ]
-      }
-    }
-  ])
+              owner: { $first: "$owner" },
+            },
+          },
+        ],
+      },
+    },
+  ]);
 
   // return the watch history array of the user
-  return res.status(200).json(new apiResponce(200, user[0]?.watchHistory || [], "Watch history found successfully"));
-})
-
-
+  return res
+    .status(200)
+    .json(
+      new apiResponce(
+        200,
+        user[0]?.watchHistory || [],
+        "Watch history found successfully"
+      )
+    );
+});
 
 // Export the registerUser function
 export {
@@ -530,5 +537,5 @@ export {
   updateUserCoverImage,
   getUserChannelProfile,
   getWatchHistory,
-  deleteCurrentUser
-}
+  deleteCurrentUser,
+};
